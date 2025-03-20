@@ -16,3 +16,19 @@
   border-radius: 10px;
   text-align: center;
 }
+
+.categoria-checkboxes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categoria-item {
+  display: flex;
+  align-items: center;
+}
+
+.text-white {
+  color: white !important; /* Fuerza el color blanco */
+}

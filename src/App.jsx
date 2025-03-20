@@ -4,6 +4,11 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Productos from "./pages/Productos";
+import Verduras from "./pages/Verduras";
+import Frutas from "./pages/Frutas";
+import Editar from "./pages/Editar";
+import Pizarron from "./pages/Pizarron";
+import PizarronB from "./pages/PizarronB";
 
 function App() {
   const [peso, setPeso] = React.useState("En espera...");
@@ -34,14 +39,23 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home peso={peso} />} />
-          <Route path="about" element={<About />} />
-          <Route path="productos" element={<Productos />} />
-        </Route>
-      </Routes>
-    </Router>
+  <Routes>
+    {/* Rutas con Layout */}
+    <Route path="/" element={<Layout />}>
+      <Route index element={<Home peso={peso} />} />
+      <Route path="about" element={<About />} />
+      <Route path="productos" element={<Productos />} />
+      <Route path="verduras" element={<Verduras />} />
+      <Route path="frutas" element={<Frutas />} />
+      <Route path="editar" element={<Editar />} />
+    </Route>
+
+    {/* Ruta sin Layout */}
+    <Route path="pizarron" element={<Pizarron />} />
+    <Route path="pizarronB" element={<PizarronB />} />
+  </Routes>
+</Router>
+
   );
 }
 

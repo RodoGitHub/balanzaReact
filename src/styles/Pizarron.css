@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Architects+Daughter&family=Patrick+Hand&family=Gloria+Hallelujah&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Just+Another+Hand&display=swap');
+
+.pizarron {
+  background-color: #2b2b2b;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.marco {
+  width: 100vw;
+  height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: url('images/pizarra.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 25px solid transparent; 
+  border-image: url('images/madera.jpg') 25 stretch; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.titulo {
+  font-family: "Permanent Marker", cursive;
+  color: white;
+  text-align: center;
+  font-size: 8rem;
+  margin-bottom: 20px;
+  text-shadow: 
+    4px 4px 0px rgba(0,0,0,0.2),
+    -2px -2px 0px rgba(255,255,255,0.3),
+    0 0 20px rgba(255,255,255,0.3);
+  letter-spacing: 2px;
+  -webkit-text-stroke: 2px rgba(191, 124, 100, 0.8);
+  position: relative;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 
+      4px 4px 0px rgba(0,0,0,0.2),
+      -2px -2px 0px rgba(255,255,255,0.3),
+      0 0 20px rgba(255,255,255,0.2);
+  }
+  to {
+    text-shadow: 
+      4px 4px 0px rgba(0,0,0,0.2),
+      -2px -2px 0px rgba(255,255,255,0.3),
+      0 0 30px rgba(255,255,255,0.4);
+  }
+}
+
+.contenedor-listas {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 0 50px;
+}
+
+.columna {
+  list-style: none;
+  flex: 1;
+  text-align: center;
+}
+
+.contenedor-listas li {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  font-family: 'Architects Daughter', cursive; 
+  font-size: 2rem;
+  padding: 8px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.categoria-checkboxes {
+  background-color: #2b2b2b;
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categoria-item {
+  display: flex;
+  align-items: start;
+}
+
+.text-white {
+  color: white !important; /* Fuerza el color blanco */
+}
