@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -18,13 +18,48 @@ function Editar() {
   const [unidadMedidaSeleccionada, setUnidadMedidaSeleccionada] = useState("");
   const [productoEditando, setProductoEditando] = useState(null);
   const [unidadesMedida, setUnidadesMedida] = useState([]);
-  const [activo_pantallaSeleccionado, setActivo_pantallaSeleccionado] = useState(true)
-  const [aplica_descuentoProducto, setAplica_descuentoProducto] = useState(true)
+  const [activo_pantallaSeleccionado, setActivo_pantallaSeleccionado] = useState(true);
+  const [aplica_descuentoProducto, setAplica_descuentoProducto] = useState(true);
+  const [imagenProducto, setImagenProducto] = useState(null);
+  const [previewImagen, setPreviewImagen] = useState(null);
 
+  const inputImagenRef = useRef(null); 
   const productosFiltrados = productos.filter((producto) =>
     categoriaSeleccionada ? producto.categoria_id === parseInt(categoriaSeleccionada) : true
   );
+
+
   
+  
+  const handleImagenChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImagenProducto(file);
+      
+      // Crear URL de vista previa
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setPreviewImagen(fileReader.result);
+      };
+      fileReader.readAsDataURL(file);
+    }
+  };
+  
+  const resetFormularioProducto = () => {
+    setNombreProducto("");
+    setPrecioProducto("");
+    setPorcentajeProducto(60);
+    setUnidadMedidaSeleccionada("");
+    setActivo_pantallaSeleccionado(true);
+    setAplica_descuentoProducto(true);
+    setImagenProducto(null);
+    setPreviewImagen(null);
+
+    // Resetear el valor del input de imagen
+    if (inputImagenRef.current) {
+      inputImagenRef.current.value = null;
+    }
+  };
   
 
   const token = localStorage.getItem("token");
@@ -189,74 +224,83 @@ function Editar() {
     }
   
     try {
+      // Usar FormData para enviar archivos
+      const formData = new FormData();
+      formData.append("nombre", nombreProducto);
+      formData.append("precio", precioProducto);
+      formData.append("porcentaje", porcentajeProducto);
+      formData.append("unidad_medida_id", unidadMedidaSeleccionada);
+      formData.append("categoria_id", categoriaSeleccionada);
+      formData.append("activo_pantalla", activo_pantallaSeleccionado);
+      formData.append("aplica_descuento", aplica_descuentoProducto);
+      
+      // Agregar la imagen solo si existe
+      if (imagenProducto) {
+        formData.append("imagen", imagenProducto);
+      }
+  
       await axios.post(
         "http://127.0.0.1:5000/producto",
+        formData,
         { 
-          nombre: nombreProducto, 
-          precio: parseFloat(precioProducto), 
-          porcentaje: porcentajeProducto,  // ✅ Enviar el número seleccionado
-          unidad_medida_id: parseInt(unidadMedidaSeleccionada, 10),  
-          categoria_id: parseInt(categoriaSeleccionada, 10),
-          activo_pantalla: Boolean(activo_pantallaSeleccionado),
-          aplica_descuento: Boolean(aplica_descuentoProducto),
-        },
-        { headers: { Authorization: `${token}` } }
+          headers: { 
+            Authorization: `${token}`,
+            "Content-Type": "multipart/form-data" 
+          } 
+        }
       );
   
       setMensaje("Producto agregado correctamente.");
-      setNombreProducto("");
-      setPrecioProducto("");
-      setPorcentajeProducto(60); 
-      setUnidadMedidaSeleccionada("");
-      setActivo_pantallaSeleccionado(true);
-      setAplica_descuentoProducto(true);
-      fetchProductos(categoriaSeleccionada);
+      resetFormularioProducto();
+      // Si categoriaSeleccionada está definida, usa ese valor
+      if (categoriaSeleccionada) {
+        fetchProductos(categoriaSeleccionada);
+      } else {
+        // Si no hay categoría seleccionada, obtén todos los productos
+        fetchProductos();
+      }
     } catch (error) {
       console.error("Error al agregar producto:", error);
       setMensaje("Error al agregar producto.");
     }
   };
 
-  // Editar producto
   const handleEditarProducto = async () => {
     if (!productoEditando) {
       setMensaje("Debe seleccionar un producto válido para editar.");
       return;
     }
-  
-    // Crear una copia del producto con los valores actualizados
-    const productoActualizado = {
-      nombre: nombreProducto,
-      precio: parseFloat(precioProducto),
-      porcentaje: parseInt(porcentajeProducto, 10),
-      aplica_descuento: Boolean(aplica_descuentoProducto),
-      unidad_medida_id: parseInt(unidadMedidaSeleccionada, 10),
-      categoria_id: parseInt(categoriaSeleccionada, 10),
-      activo_pantalla: Boolean(activo_pantallaSeleccionado),
-    };
-  
+
     try {
+      // Usar FormData para enviar archivos
+      const formData = new FormData();
+      formData.append("nombre", nombreProducto);
+      formData.append("precio", precioProducto);
+      formData.append("porcentaje", porcentajeProducto);
+      formData.append("unidad_medida_id", unidadMedidaSeleccionada);
+      formData.append("categoria_id", categoriaSeleccionada);
+      formData.append("activo_pantalla", activo_pantallaSeleccionado);
+      formData.append("aplica_descuento", aplica_descuentoProducto);
+      
+      // Agregar la imagen solo si ha cambiado
+      if (imagenProducto) {
+        formData.append("imagen", imagenProducto);
+      }
+
       await axios.post(
         `http://127.0.0.1:5000/producto/${productoEditando.id}/editar`,
-        productoActualizado,
-        { headers: { Authorization: `${token}` } }
+        formData,
+        { 
+          headers: { 
+            Authorization: `${token}`,
+            "Content-Type": "multipart/form-data" 
+          } 
+        }
       );
-  
+
       setMensaje("Producto editado correctamente.");
-  
-      //Forzar la actualización del estado de edición a `null`
       setProductoEditando(null);
-  
-      //Resetear los valores después de editar
-      setNombreProducto("");
-      setPrecioProducto("");
-      setPorcentajeProducto(60);
-      setUnidadMedidaSeleccionada("");
-      setCategoriaSeleccionada("");
-      setActivo_pantallaSeleccionado(true);
-      setAplica_descuentoProducto(true);
-  
-      //Recargar la lista de productos
+      resetFormularioProducto();
       fetchProductos(categoriaSeleccionada);
     } catch (error) {
       console.error("Error al editar producto:", error);
@@ -433,8 +477,29 @@ function Editar() {
         </label>
       </div>
 
+      {/* Agregar después del último checkbox y antes de los botones de guardar/agregar */}
+      <div className="mb-3">
+        <label className="form-label">Imagen del producto:</label>
+        <input
+          type="file"
+          className="form-control"
+          accept="image/*"
+          onChange={handleImagenChange}
+          ref={inputImagenRef} // Asignar la referencia al input
+        />
+        {previewImagen && (
+          <div className="mt-2">
+            <img
+              src={previewImagen}
+              alt="Vista previa"
+              style={{ maxWidth: "200px", maxHeight: "200px" }}
+              className="img-thumbnail"
+            />
+          </div>
+        )}
+      </div>
 
-        {productoEditando ? (
+      {productoEditando ? (
         <button className="btn btn-warning me-2" onClick={handleEditarProducto}>
           Guardar Cambios
         </button>
@@ -469,6 +534,7 @@ function Editar() {
         
         <thead className="table-dark">
           <tr>
+            <th>Imagen</th>
             <th onClick={() => ordenarProductos("nombre")} style={{ cursor: "pointer" }}>
               Producto {orden.campo === "nombre" ? (orden.ascendente ? "▲" : "▼") : ""}
             </th>
@@ -490,6 +556,13 @@ function Editar() {
         <tbody>
           {productosFiltrados.map((producto) => (
             <tr key={producto.id}>
+              <td>
+                  <img 
+                    src={`http://127.0.0.1:5000${producto.imagen_url}`} 
+                    alt={producto.nombre}
+                    style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                  />
+              </td>
               <td>{producto.nombre}</td>
               <td>${producto.precio}</td>
               <td>{producto.porcentaje}%</td>
@@ -507,7 +580,14 @@ function Editar() {
                   setUnidadMedidaSeleccionada(producto.unidad_medida_id);
                   setCategoriaSeleccionada(producto.categoria_id);
                   setActivo_pantallaSeleccionado(producto.activo_pantalla); 
-                  setAplica_descuentoProducto(producto.aplica_descuento); 
+                  setAplica_descuentoProducto(producto.aplica_descuento);
+                  // Agregar la vista previa de la imagen actual
+                  if (producto.imagen_url) {
+                    setPreviewImagen(`http://127.0.0.1:5000${producto.imagen_url}`);
+                  } else {
+                    setPreviewImagen(`http://127.0.0.1:5000/static/images/productos/noimagen.png`);
+                  }
+                  setImagenProducto(null); // Resetear la imagen nueva seleccionada
                 }}
               >
                 Editar
