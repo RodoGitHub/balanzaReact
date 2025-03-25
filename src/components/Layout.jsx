@@ -11,13 +11,7 @@ function Layout() {
           <Link to="/" className="nav-link" >Inicio</Link>
         </li>
         <li className="nav-item">
-          <Link to="/about" className="nav-link" >Sobre Nosotros</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/productos" className="nav-link">Productos</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/editar" className="nav-link">Editar</Link>
+          <Link to="/Configuracion" className="nav-link" >Configuracion</Link>
         </li>
         <li className="nav-item">
           <Link to="/pizarron" className="nav-link">Pizarron 1</Link>

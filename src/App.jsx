@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Productos from "./pages/Productos";
 import Verduras from "./pages/Verduras";
 import Frutas from "./pages/Frutas";
 import Editar from "./pages/Editar";
 import Pizarron from "./pages/Pizarron";
 import PizarronB from "./pages/PizarronB";
+import ConfiguracionIndex from "./pages/configuracion/index";
+import Productos from "./pages/configuracion/productos"; // Mantén esta importación
+import Categorias from "./pages/configuracion/categorias";
 
 function App() {
   const [peso, setPeso] = React.useState("En espera...");
@@ -20,9 +22,12 @@ function App() {
         const datos = await respuesta.json();
 
         if (typeof datos.peso === "number") {
-          const respuesta_final = datos.peso >= 1000 
-            ? `${(datos.peso / 1000).toLocaleString("es-AR", { minimumFractionDigits: 3 })} kg` 
-            : `${datos.peso} gr`;
+          const respuesta_final =
+            datos.peso >= 1000
+              ? `${(datos.peso / 1000).toLocaleString("es-AR", {
+                  minimumFractionDigits: 3,
+                })} kg`
+              : `${datos.peso} gr`;
 
           setPeso(respuesta_final);
         } else {
@@ -39,23 +44,24 @@ function App() {
 
   return (
     <Router>
-  <Routes>
-    {/* Rutas con Layout */}
-    <Route path="/" element={<Layout />}>
-      <Route index element={<Home peso={peso} />} />
-      <Route path="about" element={<About />} />
-      <Route path="productos" element={<Productos />} />
-      <Route path="verduras" element={<Verduras />} />
-      <Route path="frutas" element={<Frutas />} />
-      <Route path="editar" element={<Editar />} />
-    </Route>
+      <Routes>
+        {/* Rutas con Layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home peso={peso} />} />
+          <Route path="about" element={<About />} />
+          <Route path="verduras" element={<Verduras />} />
+          <Route path="frutas" element={<Frutas />} />
+          <Route path="editar" element={<Editar />} />
+          <Route path="/configuracion" element={<ConfiguracionIndex />} />
+          <Route path="/configuracion/productos" element={<Productos />} />
+          <Route path="/configuracion/categorias" element={<Categorias />} />
+        </Route>
 
-    {/* Ruta sin Layout */}
-    <Route path="pizarron" element={<Pizarron />} />
-    <Route path="pizarronB" element={<PizarronB />} />
-  </Routes>
-</Router>
-
+        {/* Ruta sin Layout */}
+        <Route path="pizarron" element={<Pizarron />} />
+        <Route path="pizarronB" element={<PizarronB />} />
+      </Routes>
+    </Router>
   );
 }
 

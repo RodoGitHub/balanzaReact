@@ -29,7 +29,7 @@ function Login() {
         localStorage.setItem("username", nombreUsuario); // Guardar usuario
 
         setMessage("Login exitoso");
-        navigate("/editar"); // Redirigir después del login
+        navigate("/about"); // Redirigir después del login
       } else {
         setMessage("Login fallido: " + response.data.Mensaje);
       }
